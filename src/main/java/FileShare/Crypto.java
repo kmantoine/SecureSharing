@@ -1,6 +1,5 @@
 package FileShare;
 
-import static FileShare.Selection.FileName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,6 +7,8 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -22,8 +23,9 @@ import org.apache.commons.io.FilenameUtils;
  */
 
 public class Crypto {
-    static File encryptedFile = new File("test.encrypted");
-    private static String key = "";
+    static File encryptedFile;
+    private static File decryptedFile;
+    private static String key;
     
     static void fileProcessor(int cipherMode,String key,File inputFile,File outputFile){
 	try {
@@ -48,10 +50,12 @@ public class Crypto {
 
     public static void Encrypt(String key) {	
         try {
-            fileProcessor(Cipher.ENCRYPT_MODE,key,Selection.sourceFile,encryptedFile);
+            String source = FilenameUtils.getName(BackUp_SelectAndShare.FileName);
+            encryptedFile = new File(source + ".encrypted");
+            fileProcessor(Cipher.ENCRYPT_MODE,key,BackUp_SelectAndShare.sourceFile,encryptedFile);
         } 
         catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -67,12 +71,12 @@ public class Crypto {
             String pass = String.copyValueOf(password);
             if (pass == null ? key == null : pass.equals(key)) {
                 try {
-                    String dest = FilenameUtils.getName(Selection.FileName);
-                    File decryptedFile = new File("/Users/Miguel/Desktop/" +dest);
+                    String dest = FilenameUtils.getName(BackUp_SelectAndShare.FileName);
+                    decryptedFile = new File("/Users/Miguel/Desktop/" +dest);
                     fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
                 } 
                 catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, null, ex);
                 }    
             }
             else {

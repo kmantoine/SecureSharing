@@ -3,24 +3,26 @@ package FileShare;
  *
  * @author Kerwan Miguel Antoine
  */
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.sql.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FilenameUtils;
 
-public class Selection extends javax.swing.JFrame { 
+public class BackUp_SelectAndShare extends javax.swing.JFrame { 
 
-    static File sourceFile; //Used for Encryprion Method
+    static File sourceFile=null; //Used for Encryprion Method
     static String FileName; //Used for Editing File & Sharing
     
-    public Selection() {
+    public BackUp_SelectAndShare() {
         initComponents();
     }
     
@@ -45,7 +47,7 @@ public class Selection extends javax.swing.JFrame {
         setLocation(new java.awt.Point(0, 0));
         setResizable(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, LoginWindow.welcome, javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(0, 51, 204))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, FileShare.BackUp_LoginWindow.welcome, javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Dialog", 0, 11), new java.awt.Color(0, 51, 204))); // NOI18N
 
         DefaultListModel model = new DefaultListModel();
         try {
@@ -117,7 +119,12 @@ public class Selection extends javax.swing.JFrame {
         }
     });
 
-    jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/FileShare/GSU_logo_header.png"))); // NOI18N
+    jLabel2.setIcon(null);
+    jLabel2.setBounds(new java.awt.Rectangle(0, 0, 358, 178));
+    ImageIcon MyImage = new ImageIcon("resources/GSU_logo_header.png");
+    Image img = MyImage.getImage();
+    Image newImg = img.getScaledInstance(jLabel2.getWidth(), jLabel2.getHeight(), Image.SCALE_SMOOTH);
+    jLabel2.setIcon(new ImageIcon(newImg));
 
     jButton1.setText("Share");
     jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -133,17 +140,19 @@ public class Selection extends javax.swing.JFrame {
         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
             .addGap(49, 49, 49)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jLabel2)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(209, 209, 209))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jCheckBox1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addGap(209, 209, 209))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(0, 69, Short.MAX_VALUE))
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(18, 18, 18)
             .addComponent(jFileChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 630, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(40, 40, 40))
     );
@@ -153,8 +162,8 @@ public class Selection extends javax.swing.JFrame {
             .addGap(77, 77, 77)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                 .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(jLabel2)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(18, 18, 18)
                     .addComponent(jLabel1)
                     .addGap(18, 18, 18)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -207,8 +216,10 @@ public class Selection extends javax.swing.JFrame {
         sourceFile = jFileChooser1.getSelectedFile();
         FileName = jFileChooser1.getSelectedFile().getPath();
         if (jList1.isSelectionEmpty()) // Check for no selection
-        JOptionPane.showMessageDialog(rootPane, "Please select a user to share the file with");
-        else {
+            JOptionPane.showMessageDialog(rootPane, "Please select a user");
+        else if (sourceFile==null)
+             JOptionPane.showMessageDialog(rootPane, "Please select a file");   
+        else {           
             if (jCheckBox1.isSelected()) {
                 JPanel panel = new JPanel();
                 JLabel label = new JLabel("Enter password to decrypt file:");
@@ -222,11 +233,11 @@ public class Selection extends javax.swing.JFrame {
                     Crypto.Encrypt(pass);                  
                 }               
                 try {
-                    File source = new File("test.encrypted");
+                    File source = new File(Crypto.encryptedFile);
                     File dest = new File("/Users/Miguel/Desktop/test.encrypted");
                     Files.copy(source.toPath(), dest.toPath(), REPLACE_EXISTING);
                 } catch (IOException ex) {
-                    Logger.getLogger(Selection.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BackUp_SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else {
@@ -236,9 +247,28 @@ public class Selection extends javax.swing.JFrame {
                     File dest = new File("/Users/Miguel/Desktop/" +name);
                     Files.copy(source.toPath(), dest.toPath(), REPLACE_EXISTING, COPY_ATTRIBUTES);
                 } catch (IOException ex) {
-                    Logger.getLogger(Selection.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BackUp_SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            if (JMAPI.isMapiSupported()) {
+        Message msg = new Message();
+        msg.setSubject("test!");
+        msg.setBody("Hello world");
+
+        List<String> toAddresses = new LinkedList<String>();
+        toAddresses.add("example@example.com");
+        msg.setToAddrs(toAddresses);
+
+        List<String> attachPaths = new LinkedList<String>();
+        //Must be absolute paths to file
+        attachPaths.add("C:\Users\Documents\file.jpg");
+        msg.setAttachments(attachPaths);
+
+        JMAPI.open(msg);
+    }
+
+
+
             JOptionPane.showMessageDialog(rootPane, "The file has been shared. A Message has been sent to " +  jList1.getSelectedValuesList());
             FileInterface obj = new FileInterface();
             obj.buildInterface();
@@ -246,6 +276,10 @@ public class Selection extends javax.swing.JFrame {
             }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void buildInterface() {
+        initComponents();
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -260,24 +294,16 @@ public class Selection extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Selection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(BackUp_SelectAndShare.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new Selection().setVisible(true);
+            new BackUp_SelectAndShare().setVisible(true);
         });
-        
     }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

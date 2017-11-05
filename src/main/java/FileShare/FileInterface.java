@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class FileInterface extends javax.swing.JFrame {
+public class FileInterface extends javax.swing.JInternalFrame {
     String FileName = "";
     Clipboard Clipboard = getToolkit().getSystemClipboard();
     
@@ -193,7 +193,7 @@ public class FileInterface extends javax.swing.JFrame {
       shareF();
     }//GEN-LAST:event_ShareFileActionPerformed
 
-    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerforme
+    protected void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerforme
         dispose();
     }//GEN-LAST:event_ExitActionPerformed
      
@@ -213,7 +213,7 @@ public class FileInterface extends javax.swing.JFrame {
         shareF();
     }//GEN-LAST:event_ShareButtonActionPerformed
 
-    private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
+    protected void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
        dispose();
     }//GEN-LAST:event_ExitButtonActionPerformed
     
@@ -240,8 +240,8 @@ public class FileInterface extends javax.swing.JFrame {
            String Sel = (String) TextPaste.getTransferData(DataFlavor.stringFlavor);
            TextArea.replaceRange(Sel,TextArea.getSelectionStart(),TextArea.getSelectionEnd());
        }
-       catch(UnsupportedFlavorException | IOException e){
-           System.out.println("Did not work");
+       catch(UnsupportedFlavorException | IOException ex){
+           Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
        }
     }//GEN-LAST:event_PasteTextActionPerformed
     
@@ -269,8 +269,8 @@ public class FileInterface extends javax.swing.JFrame {
                     setTitle(FileName);
                 }            
             }        
-            catch(IOException e){
-                System.out.println("File not found");
+            catch(IOException ex){
+                Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
             }           
         }
     } 
@@ -296,12 +296,12 @@ public class FileInterface extends javax.swing.JFrame {
                 }
             }
         }
-        catch (IOException e){
-            System.out.println(e);   
+        catch (IOException ex){
+            Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);   
         }    
     }
     private void shareF () {
-        Selection nextpage = new Selection();
+        BackUp_SelectAndShare nextpage = new BackUp_SelectAndShare();
         nextpage.setVisible(true);
         dispose();
     }
@@ -323,43 +323,17 @@ public class FileInterface extends javax.swing.JFrame {
                 }
             }
         }
-        catch (IOException e){
-            System.out.println("File Not Found ");
+        catch (IOException ex){
+            Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
         }          
     }
 
     public void buildInterface() {
-        this.setBounds(0,0,700,500);
-        this.setTitle("SecureShare");    
-        this.setResizable(true);
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    }
-    
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FileInterface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new FileInterface().setVisible(true);
-        });
+        setBounds(0,0,700,500);
+        setTitle("File Editor");    
+        setResizable(true);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
