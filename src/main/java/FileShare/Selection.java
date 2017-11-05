@@ -41,12 +41,11 @@ public class Selection extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("File Sharing Project");
+        setTitle("SecureShare");
         setLocation(new java.awt.Point(0, 0));
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(0, 204, 204));
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, LoginWindowUI.welcome, javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(0, 51, 204))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, LoginWindow.welcome, javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(0, 51, 204))); // NOI18N
 
         DefaultListModel model = new DefaultListModel();
         try {
@@ -184,7 +183,7 @@ public class Selection extends javax.swing.JFrame {
             .addContainerGap())
     );
 
-    jPanel1.getAccessibleContext().setAccessibleName("Share");
+    jPanel1.getAccessibleContext().setAccessibleName("");
 
     setBounds(0, 0, 1119, 638);
     }// </editor-fold>//GEN-END:initComponents
@@ -194,8 +193,8 @@ public class Selection extends javax.swing.JFrame {
         if (evt.getActionCommand().equals(javax.swing.JFileChooser.APPROVE_SELECTION)) {
             FileName = jFileChooser1.getSelectedFile().getPath();
             sourceFile = jFileChooser1.getSelectedFile();
-            TextEditorGui obj = new TextEditorGui();
-            obj.buildTextEditor();
+            FileInterface obj = new FileInterface();
+            obj.buildInterface();
             obj.OpenFileToEdit(sourceFile,FileName);
         } 
         else if (evt.getActionCommand().equals(javax.swing.JFileChooser.CANCEL_SELECTION)) {
@@ -211,8 +210,17 @@ public class Selection extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(rootPane, "Please select a user to share the file with");
         else {
             if (jCheckBox1.isSelected()) {
-                Crypto obj = new Crypto();
-                obj.Encrypt();
+                JPanel panel = new JPanel();
+                JLabel label = new JLabel("Enter password to decrypt file:");
+                JPasswordField pword = new JPasswordField(8);
+                panel.add(label, pword);
+                String[] options = new String[]{"OK", "Cancel"};
+                int option = JOptionPane.showOptionDialog(null, panel, "The title", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+                if (option == 0){
+                    char[] password = pword.getPassword();
+                    String pass = String.copyValueOf(password);
+                    Crypto.Encrypt(pass);                  
+                }               
                 try {
                     File source = new File("test.encrypted");
                     File dest = new File("/Users/Miguel/Desktop/test.encrypted");
@@ -232,8 +240,8 @@ public class Selection extends javax.swing.JFrame {
                 }
             }
             JOptionPane.showMessageDialog(rootPane, "The file has been shared. A Message has been sent to " +  jList1.getSelectedValuesList());
-            TextEditorGui obj = new TextEditorGui();
-            obj.buildTextEditor();
+            FileInterface obj = new FileInterface();
+            obj.buildInterface();
             dispose();
             }
     }//GEN-LAST:event_jButton1ActionPerformed

@@ -11,13 +11,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
-public class TextEditorGui extends javax.swing.JFrame {
-    String FileName;
+public class FileInterface extends javax.swing.JFrame {
+    String FileName = "";
     Clipboard Clipboard = getToolkit().getSystemClipboard();
     
-    public TextEditorGui() {
+    public FileInterface() {
         initComponents();  
     }
 
@@ -64,41 +67,22 @@ public class TextEditorGui extends javax.swing.JFrame {
         jScrollPane1.setViewportView(TextArea);
 
         NewButton.setText("New");
-        NewButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NewButtonActionPerformed(evt);
-            }
-        });
+        NewButton.addActionListener(this::NewButtonActionPerformed);
 
         SaveButton.setText("Save");
-        SaveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SaveButtonActionPerformed(evt);
-            }
-        });
+        SaveButton.addActionListener(this::SaveButtonActionPerformed);
 
         OpenButton.setText("Open");
-        OpenButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OpenButtonActionPerformed(evt);
-            }
-        });
+        OpenButton.addActionListener(this::OpenButtonActionPerformed);
 
         ShareButton.setText("Share");
-        ShareButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ShareButtonActionPerformed(evt);
-            }
-        });
+        ShareButton.addActionListener(this::ShareButtonActionPerformed);
 
         ConvertButton.setText("Convert");
+        ConvertButton.addActionListener(this::ConvertButtonActionPerformed);
 
         ExitButton.setText("Exit");
-        ExitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitButtonActionPerformed(evt);
-            }
-        });
+        ExitButton.addActionListener(this::ExitButtonActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -137,81 +121,47 @@ public class TextEditorGui extends javax.swing.JFrame {
 
         NewFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         NewFile.setText("New");
-        NewFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NewFileActionPerformed(evt);
-            }
-        });
+        NewFile.addActionListener(this::NewFileActionPerformed);
         FileMenu.add(NewFile);
 
         OpenFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         OpenFile.setText("Open");
-        OpenFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OpenFileActionPerformed(evt);
-            }
-        });
+        OpenFile.addActionListener(this::OpenFileActionPerformed);
         FileMenu.add(OpenFile);
 
         ShareFile.setText("Share");
-        ShareFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ShareFileActionPerformed(evt);
-            }
-        });
+        ShareFile.addActionListener(this::ShareFileActionPerformed);
         FileMenu.add(ShareFile);
 
         SaveFile.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         SaveFile.setText("Save");
-        SaveFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SaveFileActionPerformed(evt);
-            }
-        });
+        SaveFile.addActionListener(this::SaveFileActionPerformed);
         FileMenu.add(SaveFile);
 
         Exit.setText("Exit");
-        Exit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExitActionPerformed(evt);
-            }
-        });
+        Exit.addActionListener(this::ExitActionPerformed);
         FileMenu.add(Exit);
 
         jMenuBar1.add(FileMenu);
 
         EditMenu.setText("Edit");
+        jMenuBar1.add(EditMenu);
+        setJMenuBar(jMenuBar1);
 
         CutText.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         CutText.setText("Cut");
-        CutText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CutTextActionPerformed(evt);
-            }
-        });
+        CutText.addActionListener(this::CutTextActionPerformed);
         EditMenu.add(CutText);
 
         CopyText.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         CopyText.setText("Copy");
-        CopyText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CopyTextActionPerformed(evt);
-            }
-        });
+        CopyText.addActionListener(this::CopyTextActionPerformed);
         EditMenu.add(CopyText);
 
         PasteText.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, java.awt.event.InputEvent.CTRL_MASK));
         PasteText.setText("Paste");
-        PasteText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                PasteTextActionPerformed(evt);
-            }
-        });
+        PasteText.addActionListener(this::PasteTextActionPerformed);
         EditMenu.add(PasteText);
-
-        jMenuBar1.add(EditMenu);
-
-        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -228,120 +178,109 @@ public class TextEditorGui extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void NewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewFileActionPerformed
-        TextArea.setText("DEMO TEXT TO BE REPLACED");
-        setTitle("Untitled");
+        newF();
     }//GEN-LAST:event_NewFileActionPerformed
 
     private void OpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenFileActionPerformed
-        FileDialog fileDialog = new FileDialog(TextEditorGui.this, "Open File ", FileDialog.LOAD);
-        fileDialog.setVisible(true);
-        if(fileDialog.getFile() != null){
-            FileName = fileDialog.getDirectory() + fileDialog.getFile();
-            setTitle(FileName);
-        }
-        try{
-            try (BufferedReader reader = new BufferedReader (new FileReader(FileName))) {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                //    String key = null;
-                //     Crypto.fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
-                while((line = reader.readLine()) != null){
-                    sb.append(line).append("\n");
-                    TextArea.setText(sb.toString());
-                }
-            }
-        }
-        catch (IOException e){
-            System.out.println("File Not Found ");   
-        }
-            
+        openF();     
     }//GEN-LAST:event_OpenFileActionPerformed
 
     private void SaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveFileActionPerformed
-        FileDialog fileDialog = new FileDialog(TextEditorGui.this, "Save File ", FileDialog.SAVE);
-        fileDialog.setVisible(true);
-        if(fileDialog.getFile() != null){
-            FileName = fileDialog.getDirectory() + fileDialog.getFile();
-            setTitle(FileName);
-        }
-        try{
-            try (FileWriter fileWriter = new FileWriter(FileName)) {
-                fileWriter.write(TextArea.getText());
-                setTitle(FileName);
-            }            
-        }        
-        catch(IOException e){
-            System.out.println("File not found");
-        }
+        saveF();
     }//GEN-LAST:event_SaveFileActionPerformed
+    
+    private void ShareFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShareFileActionPerformed
+      shareF();
+    }//GEN-LAST:event_ShareFileActionPerformed
 
     private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerforme
         dispose();
     }//GEN-LAST:event_ExitActionPerformed
+     
+    private void NewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewButtonActionPerformed
+        newF();
+    }//GEN-LAST:event_NewButtonActionPerformed
+
+    private void OpenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenButtonActionPerformed  
+        openF();
+    }//GEN-LAST:event_OpenButtonActionPerformed
+    
+    private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
+        saveF();
+    }//GEN-LAST:event_SaveButtonActionPerformed
+
+    private void ShareButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShareButtonActionPerformed
+        shareF();
+    }//GEN-LAST:event_ShareButtonActionPerformed
+
+    private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
+       dispose();
+    }//GEN-LAST:event_ExitButtonActionPerformed
+    
+    private void ConvertButtonActionPerformed(java.awt.event.ActionEvent evt){
+        JOptionPane.showMessageDialog(rootPane, "This Option is Coming Soon!");
+    }
 
     private void CutTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CutTextActionPerformed
-        String CutString = TextArea.getSelectedText();
-        StringSelection CutSelection = new StringSelection(CutString);
+        String TextCut = TextArea.getSelectedText();
+        StringSelection CutSelection = new StringSelection(TextCut);
         Clipboard.setContents(CutSelection, CutSelection);
         TextArea.replaceRange("",TextArea.getSelectionStart(),TextArea.getSelectionEnd());
     }//GEN-LAST:event_CutTextActionPerformed
 
     private void CopyTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CopyTextActionPerformed
-        String CopyText = TextArea.getSelectedText();
-        StringSelection CopySelection = new StringSelection(CopyText);
+        String TextCopy = TextArea.getSelectedText();
+        StringSelection CopySelection = new StringSelection(TextCopy);
         Clipboard.setContents(CopySelection, CopySelection);
     }//GEN-LAST:event_CopyTextActionPerformed
 
     private void PasteTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasteTextActionPerformed
        try{
-           Transferable PasteText = Clipboard.getContents(TextEditorGui.this);
-           String Sel = (String) PasteText.getTransferData(DataFlavor.stringFlavor);
+           Transferable TextPaste = Clipboard.getContents(this);
+           String Sel = (String) TextPaste.getTransferData(DataFlavor.stringFlavor);
            TextArea.replaceRange(Sel,TextArea.getSelectionStart(),TextArea.getSelectionEnd());
        }
        catch(UnsupportedFlavorException | IOException e){
            System.out.println("Did not work");
        }
     }//GEN-LAST:event_PasteTextActionPerformed
-
-    private void ShareFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShareFileActionPerformed
-      Selection nextpage = new Selection();
-      nextpage.setVisible(true);
-    }//GEN-LAST:event_ShareFileActionPerformed
-
-    private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
-        FileDialog fileDialog = new FileDialog(TextEditorGui.this, "Save File ", FileDialog.SAVE);
-        fileDialog.setVisible(true);
-        if(fileDialog.getFile() != null){
-            FileName = fileDialog.getDirectory() + fileDialog.getFile();
-            setTitle(FileName);
-        }
-        try{
+    
+    private void saveF () {
+        FileDialog fileDialog = new FileDialog(this, "Save File ", FileDialog.SAVE);
+        File file = new File(FileName);
+        if(file.exists()){
             try (FileWriter fileWriter = new FileWriter(FileName)) {
                 fileWriter.write(TextArea.getText());
-                setTitle(FileName);
-            }     
+                setTitle(FileName); 
+            } catch (IOException ex) {
+                Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        catch(IOException e){
-            System.out.println("File not found");
+        else {
+            fileDialog.setVisible(true);
+            if(fileDialog.getFile() != null){
+            FileName = fileDialog.getDirectory() + fileDialog.getFile();
+            setTitle(FileName);
+            }
+            
+            try{
+                try (FileWriter fileWriter = new FileWriter(FileName)) {
+                    fileWriter.write(TextArea.getText());
+                    setTitle(FileName);
+                }            
+            }        
+            catch(IOException e){
+                System.out.println("File not found");
+            }           
         }
-    }//GEN-LAST:event_SaveButtonActionPerformed
-
-    private void ShareButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShareButtonActionPerformed
-        Selection nextpage = new Selection();
-        nextpage.setVisible(true);
-        dispose();
-    }//GEN-LAST:event_ShareButtonActionPerformed
-
-    private void NewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewButtonActionPerformed
-        TextArea.setText("DEMO TEXT TO BE REPLACED");
-        setTitle("Untitled");
-    }//GEN-LAST:event_NewButtonActionPerformed
-
-    private void OpenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenButtonActionPerformed  
-        
-        FileDialog fileDialog = new FileDialog(TextEditorGui.this, "Open File ", FileDialog.LOAD);
+    } 
+    private void openF () {
+        FileDialog fileDialog = new FileDialog(this, "Open File ", FileDialog.LOAD);
         fileDialog.setVisible(true);
         if(fileDialog.getFile() != null){
+            if (FileName.endsWith(".encrypted")){
+                Crypto.Decrypt();
+            }
             FileName = fileDialog.getDirectory() + fileDialog.getFile();
             setTitle(FileName);
         }
@@ -358,16 +297,20 @@ public class TextEditorGui extends javax.swing.JFrame {
             }
         }
         catch (IOException e){
-            System.out.println("File Not Found ");
-            
-        }
-    }//GEN-LAST:event_OpenButtonActionPerformed
+            System.out.println(e);   
+        }    
+    }
+    private void shareF () {
+        Selection nextpage = new Selection();
+        nextpage.setVisible(true);
+        dispose();
+    }
+    private void newF() {
+        TextArea.setText("DEMO TEXT TO BE REPLACED");
+        setTitle("Untitled");
+        FileName = "";    
+    }
 
-    private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
-       dispose();
-    }//GEN-LAST:event_ExitButtonActionPerformed
-
-    
     void OpenFileToEdit(File file, String filename) {
         setTitle(filename);      
         try{
@@ -384,16 +327,15 @@ public class TextEditorGui extends javax.swing.JFrame {
             System.out.println("File Not Found ");
         }          
     }
-    
-    public void buildTextEditor() {
+
+    public void buildInterface() {
         this.setBounds(0,0,700,500);
-        this.setTitle("Secure File Sharing");    
+        this.setTitle("SecureShare");    
         this.setResizable(true);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-
-     
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -417,7 +359,7 @@ public class TextEditorGui extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TextEditorGui().setVisible(true);
+                new FileInterface().setVisible(true);
             }
         });
     }
@@ -446,6 +388,6 @@ public class TextEditorGui extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    // End of variables declaration//GEN-END:variables
- 
+    // End of variables declaration//GEN-END:variables 
+    
 }

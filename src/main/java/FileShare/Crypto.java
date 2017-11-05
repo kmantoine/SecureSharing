@@ -1,5 +1,6 @@
 package FileShare;
 
+import static FileShare.Selection.FileName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,6 +13,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -20,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class Crypto {
     static File encryptedFile = new File("test.encrypted");
-    static File decryptedFile= new File("test.txt");
+    private static String key = "";
     
     static void fileProcessor(int cipherMode,String key,File inputFile,File outputFile){
 	try {
@@ -43,24 +46,40 @@ public class Crypto {
         }
     }
 
-public void Encrypt() {
-    String key = "This is a secret";	
-    try {
-	fileProcessor(Cipher.ENCRYPT_MODE,key,Selection.sourceFile,encryptedFile);
-	} 
+    public static void Encrypt(String key) {	
+        try {
+            fileProcessor(Cipher.ENCRYPT_MODE,key,Selection.sourceFile,encryptedFile);
+        } 
         catch (Exception ex) {
-	    System.out.println(ex.getMessage());
-	}
-}
+                System.out.println(ex.getMessage());
+        }
+    }
 
-public void Decrypt() {
-    String key = "This is a secret";	
-    try {
-	fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
-	} 
-        catch (Exception ex) {
-	    System.out.println(ex.getMessage());
-	}
-}
+    public static void Decrypt() {
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Enter password to decrypt file:");
+        JPasswordField pword = new JPasswordField(8);
+        panel.add(label, pword);
+        String[] options = new String[]{"OK", "Cancel"};
+        int option = JOptionPane.showOptionDialog(null, panel, "The title", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+        if(option == 0) {
+            char[] password = pword.getPassword();
+            String pass = String.copyValueOf(password);
+            if (pass == null ? key == null : pass.equals(key)) {
+                try {
+                    String dest = FilenameUtils.getName(Selection.FileName);
+                    File decryptedFile = new File("/Users/Miguel/Desktop/" +dest);
+                    fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
+                } 
+                catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                }    
+            }
+            else {
+                JOptionPane.showMessageDialog(panel, "Wrong Password");  
+            }
+        }   	
+        
+    }
 
 }
