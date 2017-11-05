@@ -159,7 +159,7 @@ public class SecureShareGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        LoginWindow nextpage = new LoginWindow();       
+        BackUp2_LoginWindow nextpage = new BackUp2_LoginWindow();       
         nextpage.buildInterface();
         jDesktopPane1.add(nextpage);
         nextpage.setVisible (true);
