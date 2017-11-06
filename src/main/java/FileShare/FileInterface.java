@@ -1,11 +1,12 @@
 package FileShare;
 
-import java.awt.FileDialog;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -13,8 +14,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
+import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class FileInterface extends javax.swing.JInternalFrame {
     String FileName = "";
@@ -65,6 +68,16 @@ public class FileInterface extends javax.swing.JInternalFrame {
         TextArea.setColumns(20);
         TextArea.setRows(5);
         jScrollPane1.setViewportView(TextArea);
+        TextArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                try {
+                    TextAreaKeyPressed(evt);
+                } catch (IOException | UnsupportedFlavorException ex) {
+                    Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
 
         NewButton.setText("New");
         NewButton.addActionListener(this::NewButtonActionPerformed);
@@ -220,6 +233,39 @@ public class FileInterface extends javax.swing.JInternalFrame {
     private void ConvertButtonActionPerformed(java.awt.event.ActionEvent evt){
         JOptionPane.showMessageDialog(rootPane, "This Option is Coming Soon!");
     }
+    
+    private void TextAreaKeyPressed(java.awt.event.KeyEvent evt) throws IOException, UnsupportedFlavorException {
+        if ((evt.getKeyCode() == KeyEvent.VK_C) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+            cutCopyPaste("copy");
+        }
+        else if ((evt.getKeyCode() == KeyEvent.VK_X) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+            cutCopyPaste("cut");
+        }
+        else if ((evt.getKeyCode() == KeyEvent.VK_V) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
+            cutCopyPaste("paste");
+        }
+    }
+    
+    private void cutCopyPaste (String what) throws UnsupportedFlavorException, IOException {
+        switch (what) {
+            case "cut":
+                String TextCut = TextArea.getSelectedText();
+                StringSelection CutSelection = new StringSelection(TextCut);
+                Clipboard.setContents(CutSelection, CutSelection);
+                TextArea.replaceRange("",TextArea.getSelectionStart(),TextArea.getSelectionEnd());
+                break;
+            case "copy":
+                String TextCopy = TextArea.getSelectedText();
+                StringSelection CopySelection = new StringSelection(TextCopy);
+                Clipboard.setContents(CopySelection, CopySelection);
+                break;
+            case "paste":
+                Transferable TextPaste = Clipboard.getContents(this);
+                String Sel = (String) TextPaste.getTransferData(DataFlavor.stringFlavor);        
+                TextArea.replaceRange(Sel,TextArea.getSelectionStart(),TextArea.getSelectionEnd());
+                break;
+        }
+    }
 
     private void CutTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CutTextActionPerformed
         String TextCut = TextArea.getSelectedText();
@@ -246,7 +292,6 @@ public class FileInterface extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_PasteTextActionPerformed
     
     private void saveF () {
-        FileDialog fileDialog = new FileDialog(this, "Save File ", FileDialog.SAVE);
         File file = new File(FileName);
         if(file.exists()){
             try (FileWriter fileWriter = new FileWriter(FileName)) {
@@ -257,51 +302,69 @@ public class FileInterface extends javax.swing.JInternalFrame {
             }
         }
         else {
-            fileDialog.setVisible(true);
-            if(fileDialog.getFile() != null){
-            FileName = fileDialog.getDirectory() + fileDialog.getFile();
-            setTitle(FileName);
-            }
-            
-            try{
-                try (FileWriter fileWriter = new FileWriter(FileName)) {
-                    fileWriter.write(TextArea.getText());
-                    setTitle(FileName);
-                }            
-            }        
-            catch(IOException ex){
-                Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
-            }           
+            JFileChooser files = new JFileChooser();
+            files.addActionListener((ActionEvent e) -> {
+                JInternalFrame parent1 = (JInternalFrame) SwingUtilities.getAncestorOfClass(JInternalFrame.class, files);
+                if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
+                    parent1.dispose();
+                } 
+                else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
+                    if(files.getSelectedFile() != null){
+                        FileName = files.getSelectedFile().getPath();
+                        setTitle(FileName);
+                    }
+                    try {
+                        try (FileWriter fileWriter = new FileWriter(FileName)) {
+                            fileWriter.write(TextArea.getText());
+                            setTitle(FileName);
+                        }            
+                    }        
+                    catch(IOException ex){
+                        Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                parent1.dispose();
+            });
+            SecureShareGUI obj = new SecureShareGUI();
+            JOptionPane.showInternalOptionDialog(obj.jDesktopPane1, files, "Save", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[0], null);              
         }
     } 
     private void openF () {
-        FileDialog fileDialog = new FileDialog(this, "Open File ", FileDialog.LOAD);
-        fileDialog.setVisible(true);
-        if(fileDialog.getFile() != null){
-            if (FileName.endsWith(".encrypted")){
-                Crypto.Decrypt();
-            }
-            FileName = fileDialog.getDirectory() + fileDialog.getFile();
-            setTitle(FileName);
-        }
-        try{
-            try (BufferedReader reader = new BufferedReader (new FileReader(FileName))) {
-                StringBuilder sb = new StringBuilder();
-                String line;
-                //    String key = null;
-                //     Crypto.fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
-                while((line = reader.readLine()) != null){
-                    sb.append(line).append("\n");
-                    TextArea.setText(sb.toString());
+        JFileChooser files = new JFileChooser();
+        files.addActionListener((ActionEvent e) -> {
+            JInternalFrame parent1 = (JInternalFrame) SwingUtilities.getAncestorOfClass(JInternalFrame.class, files);
+            if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
+                parent1.dispose();
+            } 
+            else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
+                if(files.getSelectedFile() != null){
+                    FileName = files.getSelectedFile().getPath();
+                    setTitle(FileName);
+                }
+                try{
+                    try (BufferedReader reader = new BufferedReader (new FileReader(FileName))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        //    String key = null;
+                        //     Crypto.fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
+                        while((line = reader.readLine()) != null){
+                            sb.append(line).append("\n");
+                            TextArea.setText(sb.toString());
+                        }
+                    }
+                }
+                catch (IOException ex){
+                    Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);   
                 }
             }
-        }
-        catch (IOException ex){
-            Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);   
-        }    
+            parent1.dispose();
+        });
+        SecureShareGUI obj = new SecureShareGUI();
+        JOptionPane.showInternalOptionDialog(obj.jDesktopPane1, files, "Open", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[0], null);                 
     }
+    
     private void shareF () {
-        BackUp_SelectAndShare nextpage = new BackUp_SelectAndShare();
+        SelectAndShare nextpage = new SelectAndShare();
         nextpage.setVisible(true);
         dispose();
     }
@@ -333,7 +396,7 @@ public class FileInterface extends javax.swing.JInternalFrame {
         setTitle("File Editor");    
         setResizable(true);
         setVisible(true);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
