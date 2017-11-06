@@ -149,7 +149,7 @@ public class SecureShareGUI extends javax.swing.JFrame {
         );
 
         jDesktopPane1.add(jInternalFrame1);
-        jInternalFrame1.setBounds(30, 10, 772, 643);
+        jInternalFrame1.setBounds(40, 20, 772, 643);
         getRootPane().setDefaultButton(jButton1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -173,7 +173,7 @@ public class SecureShareGUI extends javax.swing.JFrame {
         jDesktopPane1.add(nextpage);
         nextpage.setVisible (true);
         if (jDesktopPane1.getAllFrames().length > 0){ 
-            //dispose();
+            //this.setVisible (false);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

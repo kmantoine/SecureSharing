@@ -213,7 +213,7 @@ public class BackUp_SelectAndShare extends javax.swing.JFrame {
 
 ////// SHARE OPTION CODE ////////
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        sourceFile = jFileChooser1.getSelectedFile();
+        /*sourceFile = jFileChooser1.getSelectedFile();
         FileName = jFileChooser1.getSelectedFile().getPath();
         if (jList1.isSelectionEmpty()) // Check for no selection
             JOptionPane.showMessageDialog(rootPane, "Please select a user");
@@ -273,7 +273,7 @@ public class BackUp_SelectAndShare extends javax.swing.JFrame {
             FileInterface obj = new FileInterface();
             obj.buildInterface();
             dispose();
-            }
+            }*/
     }//GEN-LAST:event_jButton1ActionPerformed
 
     public void buildInterface() {

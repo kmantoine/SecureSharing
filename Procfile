@@ -1,1 +1,1 @@
-web: java -cp target/classes/:target/dependency/* FileShare.WelcomeScreen
+web: java -cp target/classes/:target/dependency/* FileShare.SecureShare
