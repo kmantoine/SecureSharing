@@ -1,5 +1,8 @@
 package FileShare;
 
+import static FileShare.SelectAndShare.FileName;
+import static FileShare.SelectAndShare.sourceFile;
+import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,7 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 
 /**
  *
- * @author lala
+ * @author LalaAicha Coulibaly
  */
 
 public class Crypto {
@@ -50,9 +53,9 @@ public class Crypto {
 
     public static void Encrypt(String key) {	
         try {
-            String source = FilenameUtils.getName(BackUp_SelectAndShare.FileName);
+            String source = FilenameUtils.getName(SelectAndShare.FileName);
             encryptedFile = new File(source + ".encrypted");
-            fileProcessor(Cipher.ENCRYPT_MODE,key,BackUp_SelectAndShare.sourceFile,encryptedFile);
+            fileProcessor(Cipher.ENCRYPT_MODE,key,SelectAndShare.sourceFile,encryptedFile);
         } 
         catch (Exception ex) {
                 Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,30 +63,36 @@ public class Crypto {
     }
 
     public static void Decrypt() {
-        JPanel panel = new JPanel();
-        JLabel label = new JLabel("Enter password to decrypt file:");
-        JPasswordField pword = new JPasswordField(8);
-        panel.add(label, pword);
-        String[] options = new String[]{"OK", "Cancel"};
-        int option = JOptionPane.showOptionDialog(null, panel, "The title", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
-        if(option == 0) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        JLabel label = new JLabel("Password: ");
+        JPasswordField pword = new JPasswordField(15);
+        panel.add(label);
+        panel.add(pword);
+        String[] options = new String[]{"Decrypt", "Cancel"};
+        int option = JOptionPane.showOptionDialog(null, panel, "Enter Decryption Password", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+        if (option == 0){
             char[] password = pword.getPassword();
-            String pass = String.copyValueOf(password);
-            if (pass == null ? key == null : pass.equals(key)) {
+            String newkey = String.copyValueOf(password);
+            if (newkey == null ? key == null : newkey.equals(key)) {
                 try {
-                    String dest = FilenameUtils.getName(BackUp_SelectAndShare.FileName);
+                    String dest = FilenameUtils.getName(SelectAndShare.FileName);
                     decryptedFile = new File("/Users/Miguel/Desktop/" +dest);
                     fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
+                    FileInterface obj = new FileInterface();
+                    obj.OpenFileToEdit(sourceFile,FileName);
                 } 
                 catch (Exception ex) {
                     Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, null, ex);
                 }    
             }
             else {
-                JOptionPane.showMessageDialog(panel, "Wrong Password");  
+                JOptionPane.showMessageDialog(panel, "Wrong Password"); 
+                Decrypt();
             }
-        }   	
-        
+        }
+        else if (option == 1){
+            panel.setVisible(false);
+        } 
     }
 
 }

@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 public class FileInterface extends javax.swing.JInternalFrame {
     String FileName = "";
@@ -54,6 +52,7 @@ public class FileInterface extends javax.swing.JInternalFrame {
         CutText = new javax.swing.JMenuItem();
         CopyText = new javax.swing.JMenuItem();
         PasteText = new javax.swing.JMenuItem();
+        DecryptButton = new javax.swing.JButton();
 
         jMenu1.setText("File");
         jMenuBar2.add(jMenu1);
@@ -61,7 +60,6 @@ public class FileInterface extends javax.swing.JInternalFrame {
         jMenu2.setText("Edit");
         jMenuBar2.add(jMenu2);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(800, 600));
         setSize(new java.awt.Dimension(80000, 600));
 
@@ -96,6 +94,9 @@ public class FileInterface extends javax.swing.JInternalFrame {
 
         ExitButton.setText("Exit");
         ExitButton.addActionListener(this::ExitButtonActionPerformed);
+        
+        DecryptButton.setText("Decrypt");
+        DecryptButton.addActionListener(this::DecryptButtonActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -113,6 +114,8 @@ public class FileInterface extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ConvertButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(DecryptButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ExitButton)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -125,6 +128,7 @@ public class FileInterface extends javax.swing.JInternalFrame {
                     .addComponent(OpenButton)
                     .addComponent(ShareButton)
                     .addComponent(ConvertButton)
+                    .addComponent(DecryptButton)
                     .addComponent(ExitButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 656, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -193,43 +197,37 @@ public class FileInterface extends javax.swing.JInternalFrame {
     private void NewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewFileActionPerformed
         newF();
     }//GEN-LAST:event_NewFileActionPerformed
-
     private void OpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenFileActionPerformed
         openF();     
     }//GEN-LAST:event_OpenFileActionPerformed
-
     private void SaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveFileActionPerformed
         saveF();
     }//GEN-LAST:event_SaveFileActionPerformed
-    
     private void ShareFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShareFileActionPerformed
       shareF();
     }//GEN-LAST:event_ShareFileActionPerformed
-
     protected void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerforme
         dispose();
-    }//GEN-LAST:event_ExitActionPerformed
-     
+    }//GEN-LAST:event_ExitActionPerformed  
+    
     private void NewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewButtonActionPerformed
         newF();
     }//GEN-LAST:event_NewButtonActionPerformed
-
     private void OpenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenButtonActionPerformed  
         openF();
-    }//GEN-LAST:event_OpenButtonActionPerformed
-    
+    }//GEN-LAST:event_OpenButtonActionPerformed  
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
         saveF();
     }//GEN-LAST:event_SaveButtonActionPerformed
-
     private void ShareButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShareButtonActionPerformed
         shareF();
     }//GEN-LAST:event_ShareButtonActionPerformed
-
     protected void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
        dispose();
     }//GEN-LAST:event_ExitButtonActionPerformed
-    
+    private void DecryptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DecryptButtonActionPerformed
+        Crypto.Decrypt();
+    }//GEN-LAST:event_DecryptButtonActionPerformed
     private void ConvertButtonActionPerformed(java.awt.event.ActionEvent evt){
         JOptionPane.showMessageDialog(rootPane, "This Option is Coming Soon!");
     }
@@ -244,8 +242,7 @@ public class FileInterface extends javax.swing.JInternalFrame {
         else if ((evt.getKeyCode() == KeyEvent.VK_V) && ((evt.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
             cutCopyPaste("paste");
         }
-    }
-    
+    }    
     private void cutCopyPaste (String what) throws UnsupportedFlavorException, IOException {
         switch (what) {
             case "cut":
@@ -266,20 +263,17 @@ public class FileInterface extends javax.swing.JInternalFrame {
                 break;
         }
     }
-
     private void CutTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CutTextActionPerformed
         String TextCut = TextArea.getSelectedText();
         StringSelection CutSelection = new StringSelection(TextCut);
         Clipboard.setContents(CutSelection, CutSelection);
         TextArea.replaceRange("",TextArea.getSelectionStart(),TextArea.getSelectionEnd());
     }//GEN-LAST:event_CutTextActionPerformed
-
     private void CopyTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CopyTextActionPerformed
         String TextCopy = TextArea.getSelectedText();
         StringSelection CopySelection = new StringSelection(TextCopy);
         Clipboard.setContents(CopySelection, CopySelection);
     }//GEN-LAST:event_CopyTextActionPerformed
-
     private void PasteTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasteTextActionPerformed
        try{
            Transferable TextPaste = Clipboard.getContents(this);
@@ -304,13 +298,12 @@ public class FileInterface extends javax.swing.JInternalFrame {
         else {
             JFileChooser files = new JFileChooser();
             files.addActionListener((ActionEvent e) -> {
-                JInternalFrame parent1 = (JInternalFrame) SwingUtilities.getAncestorOfClass(JInternalFrame.class, files);
                 if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
-                    parent1.dispose();
+                    files.cancelSelection();
                 } 
                 else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
                     if(files.getSelectedFile() != null){
-                        FileName = files.getSelectedFile().getPath();
+                        FileName = files.getSelectedFile().getPath().concat(".txt");
                         setTitle(FileName);
                     }
                     try {
@@ -323,18 +316,15 @@ public class FileInterface extends javax.swing.JInternalFrame {
                         Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                parent1.dispose();
             });
-            SecureShareGUI obj = new SecureShareGUI();
-            JOptionPane.showInternalOptionDialog(obj.jDesktopPane1, files, "Save", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[0], null);              
+            files.showSaveDialog(rootPane.getContentPane());        
         }
     } 
     private void openF () {
         JFileChooser files = new JFileChooser();
         files.addActionListener((ActionEvent e) -> {
-            JInternalFrame parent1 = (JInternalFrame) SwingUtilities.getAncestorOfClass(JInternalFrame.class, files);
             if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
-                parent1.dispose();
+                files.cancelSelection();
             } 
             else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
                 if(files.getSelectedFile() != null){
@@ -345,8 +335,6 @@ public class FileInterface extends javax.swing.JInternalFrame {
                     try (BufferedReader reader = new BufferedReader (new FileReader(FileName))) {
                         StringBuilder sb = new StringBuilder();
                         String line;
-                        //    String key = null;
-                        //     Crypto.fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
                         while((line = reader.readLine()) != null){
                             sb.append(line).append("\n");
                             TextArea.setText(sb.toString());
@@ -357,16 +345,13 @@ public class FileInterface extends javax.swing.JInternalFrame {
                     Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);   
                 }
             }
-            parent1.dispose();
         });
-        SecureShareGUI obj = new SecureShareGUI();
-        JOptionPane.showInternalOptionDialog(obj.jDesktopPane1, files, "Open", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, new Object[0], null);                 
+        files.showOpenDialog(rootPane.getContentPane());
     }
-    
     private void shareF () {
         SelectAndShare nextpage = new SelectAndShare();
+        SecureShareGUI.addToDesktop(nextpage);
         nextpage.setVisible(true);
-        dispose();
     }
     private void newF() {
         TextArea.setText("DEMO TEXT TO BE REPLACED");
@@ -393,9 +378,14 @@ public class FileInterface extends javax.swing.JInternalFrame {
 
     public void buildInterface() {
         setBounds(0,0,700,500);
-        setTitle("File Editor");    
+        setTitle("File Editor");
+        setClosable(true);
+        setMaximizable(true);
+        setResizable(true);
+        setFrameIcon(new javax.swing.ImageIcon("resources/Grambling_State_Tigers_logo.png"));
         setResizable(true);
         setVisible(true);
+        //this.isSelected(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
@@ -423,6 +413,7 @@ public class FileInterface extends javax.swing.JInternalFrame {
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton DecryptButton;
     // End of variables declaration//GEN-END:variables 
     
 }
