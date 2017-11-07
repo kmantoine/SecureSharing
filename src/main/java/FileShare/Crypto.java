@@ -56,8 +56,9 @@ public class Crypto {
         catch (NoSuchPaddingException | NoSuchAlgorithmException 
                 | InvalidKeyException | BadPaddingException
 	        | IllegalBlockSizeException | IOException e) {
+            Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(SecureShareGUI.jDesktopPane1, "Error in encryption");
-            System.out.println(e);
+
         }
     }
 
