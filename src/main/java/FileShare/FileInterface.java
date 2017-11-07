@@ -226,7 +226,35 @@ public class FileInterface extends javax.swing.JInternalFrame {
        dispose();
     }//GEN-LAST:event_ExitButtonActionPerformed
     private void DecryptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DecryptButtonActionPerformed
-        Crypto.Decrypt();
+        JFileChooser files = new JFileChooser();
+        files.setCurrentDirectory(new java.io.File("Shared/"));
+        files.addActionListener((ActionEvent e) -> {
+            if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
+                files.cancelSelection();
+            } 
+            else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
+                if(files.getSelectedFile() != null){
+                    FileName = files.getSelectedFile().getPath();
+                    Crypto.Decrypt();
+                    setTitle(Crypto.decryptedFile.getPath());
+                    FileName = Crypto.decryptedFile.getPath();
+                }
+                try{
+                    try (BufferedReader reader = new BufferedReader (new FileReader(FileName))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while((line = reader.readLine()) != null){
+                            sb.append(line).append("\n");
+                            TextArea.setText(sb.toString());
+                        }
+                    }
+                }
+                catch (IOException ex){
+                    Logger.getLogger(FileInterface.class.getName()).log(Level.SEVERE, null, ex);   
+                }
+            }
+        });
+        files.showOpenDialog(rootPane.getContentPane());
     }//GEN-LAST:event_DecryptButtonActionPerformed
     private void ConvertButtonActionPerformed(java.awt.event.ActionEvent evt){
         JOptionPane.showMessageDialog(rootPane, "This Option is Coming Soon!");
@@ -350,8 +378,13 @@ public class FileInterface extends javax.swing.JInternalFrame {
     }
     private void shareF () {
         SelectAndShare nextpage = new SelectAndShare();
-        SecureShareGUI.addToDesktop(nextpage);
-        nextpage.setVisible(true);
+        if (nextpage.isShowing()) {
+            toFront();
+        }
+        else {
+            SecureShareGUI.addToDesktop(nextpage);
+            nextpage.setVisible(true);
+        }
     }
     private void newF() {
         TextArea.setText("DEMO TEXT TO BE REPLACED");
@@ -377,7 +410,7 @@ public class FileInterface extends javax.swing.JInternalFrame {
     }
 
     public void buildInterface() {
-        setBounds(0,0,700,500);
+        setBounds(30,50,700,500);
         setTitle("File Editor");
         setClosable(true);
         setMaximizable(true);
@@ -385,7 +418,6 @@ public class FileInterface extends javax.swing.JInternalFrame {
         setFrameIcon(new javax.swing.ImageIcon("resources/Grambling_State_Tigers_logo.png"));
         setResizable(true);
         setVisible(true);
-        //this.isSelected(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 

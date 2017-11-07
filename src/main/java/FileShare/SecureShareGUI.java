@@ -45,11 +45,9 @@ public class SecureShareGUI extends javax.swing.JFrame {
 
         jInternalFrame1.setTitle("Welcome");
         jInternalFrame1.setToolTipText("");
-        jInternalFrame1.setBounds(new java.awt.Rectangle(190, 30, 720, 540));
         jInternalFrame1.setFocusable(false);
         jInternalFrame1.setFrameIcon(new javax.swing.ImageIcon("resources/Grambling_State_Tigers_logo.png"));
         jInternalFrame1.setPreferredSize(new java.awt.Dimension(720, 540));
-        jInternalFrame1.setRequestFocusEnabled(false);
         try {
             jInternalFrame1.setSelected(true);
         } catch (java.beans.PropertyVetoException e1) {
@@ -107,16 +105,14 @@ public class SecureShareGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1024, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1288, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 892, Short.MAX_VALUE)
         );
 
-        setSize(new java.awt.Dimension(1024, 742));
+        setSize(new java.awt.Dimension(1288, 914));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 

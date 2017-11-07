@@ -27,6 +27,7 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
 
     static File sourceFile; //Used for Encryprion Method
     static String FileName; //Used for Editing File & Sharing
+    static String key=null;
     
     public SelectAndShare() {
         initComponents();
@@ -39,7 +40,6 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jFrame1 = new javax.swing.JFrame();
         jPanel3 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -50,23 +50,12 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
         jFileChooser1 = new javax.swing.JFileChooser();
         jLabel1 = new javax.swing.JLabel();
 
-        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
-        jFrame1.getContentPane().setLayout(jFrame1Layout);
-        jFrame1Layout.setHorizontalGroup(
-            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        jFrame1Layout.setVerticalGroup(
-            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
-
         setClosable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMaximizable(true);
         setResizable(true);
         setTitle("File Share");
-        setBounds(new java.awt.Rectangle(0, 0, 1011, 655));
+        setBounds(new java.awt.Rectangle(80, 110, 655, 655));
         setFrameIcon(new javax.swing.ImageIcon("resources/Grambling_State_Tigers_logo.png")
         );
         try {
@@ -93,6 +82,7 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
         }
         catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(FileShare.SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(rootPane, "Database Error");
         }
         jList1.setModel(model
 
@@ -222,8 +212,7 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
 ////// EDIT OPTION CODE /////////
     private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooser1ActionPerformed
         if (evt.getActionCommand().equals(javax.swing.JFileChooser.APPROVE_SELECTION)) {
-            String hasFile = jFileChooser1.getSelectedFile().getPath();
-            if (hasFile==null) {
+            if (jFileChooser1.getSelectedFile()==null) {
                  JOptionPane.showMessageDialog(rootPane, "Please select a file"); 
             }
             else {
@@ -232,7 +221,7 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
                 FileInterface nextpage = new FileInterface();
                 nextpage.buildInterface();
                 nextpage.OpenFileToEdit(sourceFile,FileName);
-                SecureShareGUI.addToDesktop(nextpage);
+                SecureShareGUI.addToDesktop(nextpage);           
             }
         }
         else if (evt.getActionCommand().equals(javax.swing.JFileChooser.CANCEL_SELECTION)) {
@@ -241,49 +230,50 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jFileChooser1ActionPerformed
 ////// SHARE OPTION CODE ////////
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        //boolean yes = jFileChooser1.getSelectedFile().isFile();
         if (jList1.isSelectionEmpty()) // Check for no selection
             JOptionPane.showMessageDialog(rootPane, "Please select a user");
-        //if (!yes)
-           // JOptionPane.showMessageDialog(rootPane, "Please select a file");
+        else if (jFileChooser1.getSelectedFile()==null)
+            JOptionPane.showMessageDialog(rootPane, "Please select a file");
         else {
+            FileName = jFileChooser1.getSelectedFile().getPath();
+            sourceFile = jFileChooser1.getSelectedFile();
             if (jCheckBox1.isSelected()) {
-                FileName = jFileChooser1.getSelectedFile().getPath();
-                sourceFile = jFileChooser1.getSelectedFile();
                 JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
                 JLabel label = new JLabel("Password: ");
-                JPasswordField pword = new JPasswordField(15);
+                JPasswordField pword = new JPasswordField(16);
                 panel.add(label);
                 panel.add(pword);
                 String[] options = new String[]{"Encrypt", "Cancel"};
-                int option = JOptionPane.showOptionDialog(null, panel, "Enter Encryption Password", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+                int option = JOptionPane.showOptionDialog(rootPane, panel, "Enter Encryption Password", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
                 if (option == 0){
                     char[] password = pword.getPassword();
-                    String key = String.copyValueOf(password);
-                    Crypto.Encrypt(key);
-                    JOptionPane.showMessageDialog(rootPane, "The file has been shared with " +  jList1.getSelectedValuesList());
+                    key = String.copyValueOf(password);
+                    Crypto.Encrypt(key);                    
                 }
                 else if (option == 1){
                     panel.setVisible(false);
                 }
-                //try {
-                    //File source = new File(Crypto.encryptedFile);
-                    //File dest = new File("/Users/Miguel/Desktop/test.encrypted");
-                    //Files.copy(source.toPath(), dest.toPath(), REPLACE_EXISTING);
-                //} catch (IOException ex) {
-                    //Logger.getLogger(SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);
-               // }
+                try {
+                    File source = new File(Crypto.encryptedFile.getPath());
+                    String name = FilenameUtils.getName(Crypto.encryptedFile.getPath());
+                    File dest = new File("Shared/" +name);
+                    Files.copy(source.toPath(), dest.toPath(), REPLACE_EXISTING);
+                    JOptionPane.showMessageDialog(rootPane, "The encrypted file has been shared with " +  jList1.getSelectedValuesList());
+                } catch (IOException ex) {
+                    Logger.getLogger(SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(rootPane, "No File Found");
+                }
             }
             else {
                 try {
                     File source = new File(FileName);
                     String name = FilenameUtils.getName(FileName);
-                    File dest = new File("/Users/Miguel/Desktop/" +name);
+                    File dest = new File("Shared/" +name);
                     Files.copy(source.toPath(), dest.toPath(), REPLACE_EXISTING, COPY_ATTRIBUTES);
                     JOptionPane.showMessageDialog(rootPane, "The file has been shared with " +  jList1.getSelectedValuesList());
                 } catch (IOException ex) {
                     Logger.getLogger(SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(rootPane, "No File Found");
                 }
             }
         }
@@ -297,7 +287,6 @@ public class SelectAndShare extends javax.swing.JInternalFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     public javax.swing.JFileChooser jFileChooser1;
-    private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;

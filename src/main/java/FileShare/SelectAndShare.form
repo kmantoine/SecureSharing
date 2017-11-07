@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
-  <NonVisualComponents>
-    <Container class="javax.swing.JFrame" name="jFrame1">
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="400" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="300" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-    </Container>
-  </NonVisualComponents>
   <Properties>
     <Property name="closable" type="boolean" value="true"/>
     <Property name="defaultCloseOperation" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
@@ -27,7 +10,7 @@
     <Property name="resizable" type="boolean" value="true"/>
     <Property name="title" type="java.lang.String" value="File Share"/>
     <Property name="bounds" type="java.awt.Rectangle" editor="org.netbeans.beaninfo.editors.RectangleEditor">
-      <Rectangle value="[0, 0, 1011, 655]"/>
+      <Rectangle value="[80, 110, 655, 655]"/>
     </Property>
     <Property name="frameIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
       <Connection code="new javax.swing.ImageIcon(&quot;resources/Grambling_State_Tigers_logo.png&quot;)&#xa;" type="code"/>
@@ -178,7 +161,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="DefaultListModel model = new DefaultListModel();&#xa;try {&#xa;    Class.forName(&quot;com.mysql.jdbc.Driver&quot;);&#xa;    Connection connect = DriverManager.getConnection(&quot;jdbc:mysql://sql9.freesqldatabase.com:3306/sql9201798&quot;, &quot;sql9201798&quot; ,&quot;P@ssw0rd&quot;);&#xa;    String query = &quot;Select * from Users&quot;;&#xa;    PreparedStatement pst = connect.prepareStatement(query);&#xa;    ResultSet results = pst.executeQuery();&#xa;    while (results.next()) {&#xa;        String dbusername = results.getString(&quot;Name&quot;);      &#xa;        model.addElement(dbusername);&#xa;    }&#xa;}&#xa;catch (ClassNotFoundException | SQLException ex) {&#xa;    Logger.getLogger(FileShare.SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);&#xa;}"/>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="DefaultListModel model = new DefaultListModel();&#xa;try {&#xa;    Class.forName(&quot;com.mysql.jdbc.Driver&quot;);&#xa;    Connection connect = DriverManager.getConnection(&quot;jdbc:mysql://sql9.freesqldatabase.com:3306/sql9201798&quot;, &quot;sql9201798&quot; ,&quot;P@ssw0rd&quot;);&#xa;    String query = &quot;Select * from Users&quot;;&#xa;    PreparedStatement pst = connect.prepareStatement(query);&#xa;    ResultSet results = pst.executeQuery();&#xa;    while (results.next()) {&#xa;        String dbusername = results.getString(&quot;Name&quot;);      &#xa;        model.addElement(dbusername);&#xa;    }&#xa;}&#xa;catch (ClassNotFoundException | SQLException ex) {&#xa;    Logger.getLogger(FileShare.SelectAndShare.class.getName()).log(Level.SEVERE, null, ex);&#xa;    JOptionPane.showMessageDialog(rootPane, &quot;Database Error&quot;);&#xa;}"/>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                   </AuxValues>
                 </Component>

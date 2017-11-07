@@ -141,9 +141,9 @@ public class LoginWindow extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (jTextField1.getText()==null || jPasswordField1.getPassword()==null) // Check for empty field
-        JOptionPane.showMessageDialog(rootPane, "Please enter all fields");
-        else {
+        if (jTextField1.getText().isEmpty() || jPasswordField1.getPassword().length==0) {
+            JOptionPane.showMessageDialog(rootPane, "Please enter all fields");
+        } else {
             String username = jTextField1.getText();
             char[] password = jPasswordField1.getPassword();
             String userpassword = String.copyValueOf(password);  // Converting from array to string
@@ -161,11 +161,16 @@ public class LoginWindow extends javax.swing.JInternalFrame {
                 }
                 catch(ClassNotFoundException | SQLException ex){
                     Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(rootPane, "Database Error");                    
                 }
                 finally {
                     SelectAndShare nextpage = new SelectAndShare();
                     nextpage.buildInterface();
                     SecureShareGUI.addToDesktop(nextpage);
+                    nextpage.setVisible (true);
+                    FileInterface nextpage1 = new FileInterface();
+                    nextpage1.buildInterface();
+                    SecureShareGUI.addToDesktop(nextpage1);
                     nextpage.setVisible (true);
                     dispose();
                 }
@@ -192,6 +197,7 @@ public class LoginWindow extends javax.swing.JInternalFrame {
         }
         catch(ClassNotFoundException | SQLException ex){
             Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(rootPane, "Database Error");
             return false;
         }
     }
