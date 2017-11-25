@@ -258,8 +258,21 @@ public class SecureShare extends javax.swing.JFrame {
         //Server ServerInstance = new Server();
         //ServerInstance.connServer();
 
+        //JCE Unlimited Strength fix
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+            field.setAccessible(true);
 
-        //INACTIVE timeout
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(null, false);
+        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(SecureShare.class.getName()).log(Level.SEVERE, "Policy Error", ex);
+        }
+
+        //INACTIVE user timeout
         Toolkit.getDefaultToolkit().addAWTEventListener((AWTEvent evt) -> {
             time = System.currentTimeMillis();
         }, eventMask);
@@ -276,30 +289,12 @@ public class SecureShare extends javax.swing.JFrame {
                     login.setVisible (true);
                     addToDesktop (login);
                     Logger.getLogger (SecureShare.class.getName()).log (Level.INFO, "Logging off inactive user");
-                    JOptionPane.showMessageDialog(jDesktopPane1, "No activity for 5 minutes. You've been logged out.", "User Logged Out", HEIGHT, new ImageIcon("Resources/secureShare_logo.png"));
+                    JOptionPane.showMessageDialog(jDesktopPane1, "No activity for 5 minutes. You've been logged out.", "User Logged Out", HEIGHT, new ImageIcon(SecureShare.class.getResource("/secureShare_logo.png")));
                 }
             }
         });
         thread.start();
 
-        try{  
-            // hack for JCE Unlimited Strength
-            Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
-            field.setAccessible(true);
-
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-            field.set(null, false);
-        } catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(SecureShare.class.getName()).log(Level.SEVERE, "Policy Error", ex);
-        }
-
-        //</editor-fold>
-        //</editor-fold>
-
-        //</editor-fold>
         //</editor-fold>
     }
 

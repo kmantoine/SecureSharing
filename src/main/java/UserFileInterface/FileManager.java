@@ -422,6 +422,11 @@ public class FileManager extends javax.swing.JInternalFrame {
         ));
         jTable1.setDragEnabled(true);
         jTable1.setShowGrid(false);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable1);
         ListSelectionListener listSelectionListener = new ListSelectionListener() {
             @Override
@@ -525,63 +530,7 @@ public class FileManager extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 //OPEN A FILE
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (currentFile==null) {
-            JOptionPane.showMessageDialog(rootPane, "Please select a File or Directory", "Nothing Selected", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
-        }
-        File parentFile = currentFile;
-        File file = new File( parentFile, currentFile.getName ());
-        if (FilenameUtils.isExtension (currentFile.getAbsolutePath (), "encrypted")) {     
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            JLabel label = new JLabel("Password: ");
-            JPasswordField pword = new JPasswordField(16);
-            panel.add(label);
-            panel.add(pword);
-            String[] options = new String[]{"Decrypt", "Cancel"};
-            int option = JOptionPane.showOptionDialog(rootPane, panel, "This File is Encrypted", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon(getClass().getResource("/secureShare_logo.png")), options, options[1]);
-            if (option == 0){
-                char[] password = pword.getPassword();
-                String key = String.copyValueOf(password);
-                if (DBConnection.pullKey(currentFile.getName (), key)) {
-                    Crypto.Decrypt (currentFile, key);
-                    JOptionPane.showMessageDialog(rootPane, "File has been decrypted successfully", "Decyption Succesful", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
-                    try {
-                        desktop.open(currentFile);
-                    } catch(IOException ex) {
-                        Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, "Error Opening File", ex);
-                    }
-                    //Refresh Viewer
-                    if (!parentFile.isDirectory()) {
-                        parentFile = parentFile.getParentFile();
-                    }
-                    if (currentFile.exists ()) {
-                        TreePath parentPath = findTreePath(parentFile);
-                        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-                        if (file.isDirectory()) {
-                            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file);
-                            TreePath currentPath = findTreePath(currentFile);
-                            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)currentPath.getLastPathComponent();
-                            treeModel.insertNodeInto(newNode, parentNode, parentNode.getChildCount());
-                        }
-                        showChildren(parentNode);
-                        jPanel8.repaint();
-                    }
-                }
-                else {
-                    JOptionPane.showMessageDialog(rootPane, "You've entered the wrong password. Try again.", "Wrong Password!", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
-                }     
-            }
-            else if (option==1) {
-                panel.setVisible(false);
-            }
-        }
-        else {
-            try {
-                desktop.open (currentFile);
-            }
-            catch (IOException ex) {
-                Logger.getLogger (FileManager.class.getName()).log (Level.SEVERE, null, ex);
-            }
-        }      
+        openFile ();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
@@ -807,6 +756,74 @@ public class FileManager extends javax.swing.JInternalFrame {
         searchResults.setVisible(true);
     }//GEN-LAST:event_jTextField2KeyPressed
 
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        if (evt.getClickCount() == 2) {
+            openFile ();
+        }
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    public void openFile () {
+        if (currentFile==null) {
+            JOptionPane.showMessageDialog(rootPane, "Please select a File or Directory", "Nothing Selected", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
+        }
+        File parentFile = currentFile;
+        File file = new File( parentFile, currentFile.getName ());
+        if (FilenameUtils.isExtension (currentFile.getAbsolutePath (), "encrypted")) {
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            JLabel label = new JLabel("Password: ");
+            JPasswordField pword = new JPasswordField(16);
+            panel.add(label);
+            panel.add(pword);
+            String[] options = new String[]{"Decrypt", "Cancel"};
+            int option = JOptionPane.showOptionDialog(rootPane, panel, "This File is Encrypted", JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, new ImageIcon(getClass().getResource("/secureShare_logo.png")), options, options[1]);
+            if (option == 0){
+                char[] password = pword.getPassword();
+                String key = String.copyValueOf(password);
+                if (DBConnection.pullKey(currentFile.getName (), key)) {
+                    Crypto.Decrypt (currentFile, key);
+                    JOptionPane.showMessageDialog(rootPane, "File has been decrypted successfully", "Decyption Succesful", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
+                    try {
+                        desktop.open(currentFile);
+                    } catch(IOException ex) {
+                        Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, "Error Opening File", ex);
+                    }
+                    //Refresh Viewer
+                    if (!parentFile.isDirectory()) {
+                        parentFile = parentFile.getParentFile();
+                    }
+                    if (currentFile.exists ()) {
+                        TreePath parentPath = findTreePath(parentFile);
+                        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+                        if (file.isDirectory()) {
+                            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file);
+                            TreePath currentPath = findTreePath(currentFile);
+                            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)currentPath.getLastPathComponent();
+                            treeModel.insertNodeInto(newNode, parentNode, parentNode.getChildCount());
+                        }
+                        showChildren(parentNode);
+                        jPanel8.repaint();
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(rootPane, "You've entered the wrong password. Try again.", "Wrong Password!", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
+                }
+            }
+            else if (option==1) {
+                panel.setVisible(false);
+            }
+        }
+        else {
+            try {
+                desktop.open (currentFile);
+            }
+            catch (IOException ex) {
+                Logger.getLogger (FileManager.class.getName()).log (Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+
+
     private void showChildren(final DefaultMutableTreeNode node) {
         jTree1.setEnabled(false);
         jProgressBar1.setVisible(true);
@@ -891,7 +908,7 @@ public class FileManager extends javax.swing.JInternalFrame {
                 jTable1.setRowHeight( icon.getIconHeight()+rowIconPadding );
                 
                 setColumnWidth(0,-1);
-                setColumnWidth(3,-1);
+                setColumnWidth(3,-60);
                 jTable1.getColumnModel().getColumn(3).setMaxWidth(120);
                 setColumnWidth(4,100);
                 cellSizesSet = true;

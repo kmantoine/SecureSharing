@@ -531,6 +531,9 @@
                           <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable1MouseClicked"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="ListSelectionListener listSelectionListener = new ListSelectionListener() {&#xa;@Override&#xa;    public void valueChanged(ListSelectionEvent lse) {&#xa;        int row = jTable1.getSelectionModel().getLeadSelectionIndex();&#xa;        RowSorter sorter = jTable1.getRowSorter();&#xa;        try {   &#xa;            if ( sorter != null){&#xa;                row = sorter.convertRowIndexToModel(row);                            &#xa;            }&#xa;            getFileDetails( ((UserFileInterface.FileTableModel)jTable1.getModel()).getFile(row) );&#xa;        }&#xa;        catch (IndexOutOfBoundsException ex) {  }&#xa;    }&#xa;};&#xa;&#xa;jTable1.getSelectionModel ().addListSelectionListener (listSelectionListener);"/>
                       </AuxValues>

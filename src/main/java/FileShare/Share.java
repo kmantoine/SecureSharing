@@ -5,7 +5,7 @@ import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.io.File;
 import java.io.IOException;
-import java.util.SortedSet;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -67,7 +67,7 @@ public class Share extends javax.swing.JInternalFrame {
         jList1.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED), javax.swing.BorderFactory.createTitledBorder(null, "Select Users", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Lucida Grande", 0, 13), new java.awt.Color(51, 153, 255)))); // NOI18N
         jList1.setModel(model
         );
-        SortedSet<Object> model;
+        sortList(jList1);
         jList1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jList1.setFixedCellWidth(320);
         jList1.setPreferredSize(new java.awt.Dimension(200, 200));
@@ -148,11 +148,16 @@ Restart:
                             for (int i=0; i<jList1.getSelectedValuesList ().size (); i++) {
                                 File dest = new File("User Files/" + jList1.getSelectedValuesList ().get (i) + "/Shared With Me/");
                                 FileUtils.copyToDirectory (source, dest);
-                                //String[] sendDetails = DBConnection.runShareQuery (jList1.getSelectedValuesList().get(i)); //get telephone number and email address for selected shared user
-                                //ClientConnect.MessageService (sendDetails[0], key); //send encryption password to shared user
-                                //ClientConnect.EmailService (senderEmail, sendDetails[1], dest.getAbsolutePath()); //send file to shared user through email
-                                //URI mailto = new URI("mailto",sendDetails[1],"?subject=You've Received a Shared File&body=Please check your 'Shared With Me' folder.\n\n\nThe password is: " + key);
-                                //desktop.mail(mailto);
+                                /*String[] sendDetails = DBConnection.runShareQuery (jList1.getSelectedValuesList().get(i)); //get telephone number and email address for selected shared user
+                                ClientConnect.MessageService (sendDetails[0], key); //send encryption password to shared user
+                                ClientConnect.EmailService (senderEmail, sendDetails[1], dest.getAbsolutePath()); //send file to shared user through email     
+                                try {
+                                    URI mailto = new URI("mailto",sendDetails[1],"?subject=You've Received a Shared File&body=Please check your 'Shared With Me' folder.\n\n\nThe password is: " + key);
+                                    desktop.mail(mailto);
+                                }
+                                catch (URISyntaxException ex) {
+                                    Logger.getLogger (Share.class.getName()).log (Level.SEVERE, null, ex);
+                                }*/
                             }
                             JOptionPane.showMessageDialog(rootPane, "A message has been sent to: " +  jList1.getSelectedValuesList().toString ().replace ("[", "").replace ("]", ""), "Encrypted File Shared", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
                             source.delete();
@@ -177,10 +182,15 @@ Restart:
                         File source = new File(file.getAbsolutePath ());
                         File dest = new File("User Files/" + jList1.getSelectedValuesList ().get (i) + "/Shared With Me/");
                         FileUtils.copyToDirectory (source, dest);
-                        //String[] sendDetails = DBConnection.runShareQuery (jList1.getSelectedValuesList().get(i)); //get telephone number and email address for selected shared user
-                        //ClientConnect.EmailService (senderEmail, sendDetails[1], dest.getAbsolutePath ()); //send file to shared user through email
-                        //URI mailto = new URI("mailto",sendDetails[1],"?subject=You've Received a Shared File&body=Please check your 'Shared With Me' folder.");
-                        //desktop.mail(mailto); 
+                        /*String[] sendDetails = DBConnection.runShareQuery (jList1.getSelectedValuesList().get(i)); //get telephone number and email address for selected shared user
+                        ClientConnect.EmailService (senderEmail, sendDetails[1], dest.getAbsolutePath ()); //send file to shared user through email
+                        try {
+                            URI mailto = new URI("mailto",sendDetails[1],"?subject=You've Received a Shared File&body=Please check your 'Shared With Me' folder.\n\n\nThe password is: " + key);
+                            desktop.mail(mailto);
+                        }
+                        catch (URISyntaxException ex) {
+                            Logger.getLogger (Share.class.getName()).log (Level.SEVERE, null, ex);
+                        }*/
                     }
                     JOptionPane.showMessageDialog(rootPane, "A message has been sent to: " +  jList1.getSelectedValuesList().toString ().replace ("[", "").replace ("]", ""), "File Shared Successfully", HEIGHT, new ImageIcon(getClass().getResource("/secureShare_logo.png")));
                     this.dispose ();
@@ -197,6 +207,20 @@ Restart:
         dispose ();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    public void sortList(JList list) {
+      ListModel newModel = list.getModel();
+
+      int n = newModel.getSize();
+      String[] data = new String[n];
+
+      for (int i=0; i<n; i++) {
+         data[i] = (String) newModel.getElementAt(i);
+      }
+
+      Arrays.sort(data);
+
+      list.setListData(data);
+   }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

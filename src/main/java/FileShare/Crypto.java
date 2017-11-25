@@ -26,7 +26,7 @@ public class Crypto {
 	try {
 	    Key secretKey = new SecretKeySpec(key, "AES");
 	    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-	    cipher.init(cipherMode, secretKey);//, new IvParameterSpec(new byte[16]));
+	    cipher.init(cipherMode, secretKey); //, new IvParameterSpec(new byte[16]));
            
             FileOutputStream outputStream;
             try (FileInputStream inputStream = new FileInputStream(inputFile)) {
