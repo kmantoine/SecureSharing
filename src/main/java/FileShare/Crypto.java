@@ -1,12 +1,10 @@
 package FileShare;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import UserFileInterface.FileManager;
+import java.io.*;
+import java.security.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -15,18 +13,21 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  *
- * @author lala
+ * @author LalaAicha Coulibaly
  */
 
 public class Crypto {
-    static File encryptedFile = new File("test.encrypted");
-    static File decryptedFile= new File("test.txt");
+    public static File encryptedFile;
+    public static File decryptedFile;
+    private static byte[] hashKey;
+    private final static String SALT = "wreghytjuyikuhjgf7yuthresfoeikjtdngsfviaekrjtperfoqerbw";
     
-    static void fileProcessor(int cipherMode,String key,File inputFile,File outputFile){
+    static void fileProcessor(int cipherMode, byte[] key, File inputFile, File outputFile){
 	try {
-	    Key secretKey = new SecretKeySpec(key.getBytes(), "AES");
-	    Cipher cipher = Cipher.getInstance("AES");
-	    cipher.init(cipherMode, secretKey);
+	    Key secretKey = new SecretKeySpec(key, "AES");
+	    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+	    cipher.init(cipherMode, secretKey); //, new IvParameterSpec(new byte[16]));
+           
             FileOutputStream outputStream;
             try (FileInputStream inputStream = new FileInputStream(inputFile)) {
                 byte[] inputBytes = new byte[(int) inputFile.length()];
@@ -37,30 +38,38 @@ public class Crypto {
             }
 	    outputStream.close();
 	} 
-        catch (NoSuchPaddingException | NoSuchAlgorithmException 
-                | InvalidKeyException | BadPaddingException
-	        | IllegalBlockSizeException | IOException e) {
+        catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | IOException ex) {
+            Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, "Error with encryption", ex);
         }
     }
 
-public void Encrypt() {
-    String key = "This is a secret";	
-    try {
-	fileProcessor(Cipher.ENCRYPT_MODE,key,Selection.sourceFile,encryptedFile);
-	} 
-        catch (Exception ex) {
-	    System.out.println(ex.getMessage());
-	}
-}
+    public static void Encrypt(File sourceFile, String key) {
+        createHash (key);
+        encryptedFile = new File(sourceFile.getName () + ".encrypted");
+        fileProcessor(Cipher.ENCRYPT_MODE, hashKey, sourceFile, encryptedFile); //ENCRYPT
+        for (int i=0; i<Share.jList1.getSelectedValuesList ().size (); i++) {
+            String name = Share.jList1.getSelectedValuesList ().get (i);
+            DBConnection.insertIntoDB (name, encryptedFile.getName (), key);
+        }
+    }
 
-public void Decrypt() {
-    String key = "This is a secret";	
-    try {
-	fileProcessor(Cipher.DECRYPT_MODE,key,encryptedFile,decryptedFile);
-	} 
-        catch (Exception ex) {
-	    System.out.println(ex.getMessage());
-	}
-}
+    public static void Decrypt(File sourceFile, String key) {
+        createHash(key);
+        decryptedFile = new File(sourceFile.getAbsolutePath ().replace (".encrypted", ""));
+        fileProcessor(Cipher.DECRYPT_MODE, hashKey, sourceFile, decryptedFile); //DECRYPT
+        FileManager.currentFile = decryptedFile;
+        DBConnection.deleteFromDB(sourceFile.getName (), key);
+        sourceFile.delete ();
+    }
+    
+    public static void createHash (String key) {
+        try {
+            byte[] newKey = (SALT.substring(13, 35) + key).getBytes("UTF-8");
+            MessageDigest hash = MessageDigest.getInstance("SHA-256");
+            hashKey = hash.digest(newKey);
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
+            Logger.getLogger(Crypto.class.getName()).log(Level.SEVERE, "Error creating hash", ex);
+        }
+    }
 
 }
