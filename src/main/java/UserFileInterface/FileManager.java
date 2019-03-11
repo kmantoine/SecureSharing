@@ -22,8 +22,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FilenameUtils;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import java.nio.channels.FileChannel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -53,6 +53,8 @@ public class FileManager extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
         jPanel8 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
@@ -142,6 +144,11 @@ public class FileManager extends javax.swing.JInternalFrame {
         }
         jTree1 = new javax.swing.JTree(treeModel);
         jPanel7 = new javax.swing.JPanel();
+
+        jTextPane1.setForeground(new java.awt.Color(204, 204, 204));
+        jTextPane1.setText("SEARCH");
+        jTextPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jScrollPane3.setViewportView(jTextPane1);
 
         setClosable(true);
         setIconifiable(true);
@@ -300,6 +307,7 @@ public class FileManager extends javax.swing.JInternalFrame {
         jTextField2.setToolTipText("Search Current Folder");
         jTextField2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED, null, new java.awt.Color(153, 153, 153), null, new java.awt.Color(204, 204, 204)));
         jTextField2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jTextField2.setEnabled(false);
         jTextField2.setOpaque(true);
         jTextField2.setRequestFocusEnabled(false);
         jTextField2.setSelectionEnd(0);
@@ -737,23 +745,17 @@ public class FileManager extends javax.swing.JInternalFrame {
 
     private void jTextField2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField2MouseClicked
         jTextField2.setText ("");
+        jTextField2.setEnabled(true);
     }//GEN-LAST:event_jTextField2MouseClicked
 
     private void jTextField2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField2FocusLost
         jTextField2.setText ("SEARCH");
+        jTextField2.setEnabled (false);
     }//GEN-LAST:event_jTextField2FocusLost
 
     private void jTextField2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField2KeyPressed
-        JTextField searchResults = new JTextField("");
-        AutoCompleteDecorator decorator;
-
-        JComboBox combobox = new JComboBox(new Object[]{treeModel});
-        AutoCompleteDecorator.decorate(combobox);
-        searchResults.setEditable (false);
-        searchResults.setBounds (100, 100, 100, 100);
-        searchResults.setLayout(new FlowLayout());
-        searchResults.add(combobox);
-        searchResults.setVisible(true);
+        String query = jTextField2.getText ().toLowerCase ();
+        search (query);
     }//GEN-LAST:event_jTextField2KeyPressed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -822,7 +824,12 @@ public class FileManager extends javax.swing.JInternalFrame {
         }
     }
 
+    private void search (String query) {
+        TableRowSorter<FileTableModel> results = new TableRowSorter<> (fileTableModel);
+        jTable1.setRowSorter (results);
+        results.setRowFilter (RowFilter.regexFilter (query));
 
+    }
 
     private void showChildren(final DefaultMutableTreeNode node) {
         jTree1.setEnabled(false);
@@ -904,8 +911,8 @@ public class FileManager extends javax.swing.JInternalFrame {
             fileTableModel.setFiles(files);
             jTable1.getSelectionModel().addListSelectionListener(listSelectionListener);
             if (!cellSizesSet) {
-                Icon icon = fileSystemView.getSystemIcon(files[0]);
-                jTable1.setRowHeight( icon.getIconHeight()+rowIconPadding );
+                //Icon icon = fileSystemView.getSystemIcon(files[0]);
+                //jTable1.setRowHeight( icon.getIconHeight()+rowIconPadding );
                 
                 setColumnWidth(0,-1);
                 setColumnWidth(3,-60);
@@ -963,6 +970,7 @@ public class FileManager extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
@@ -974,6 +982,7 @@ public class FileManager extends javax.swing.JInternalFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextPane jTextPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
