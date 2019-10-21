@@ -13,7 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  *
- * @author LalaAicha Coulibaly
+ * @author LalaAicha Coulibaly and Kerwan Antoine
  */
 
 public class Crypto {
